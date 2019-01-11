@@ -16,4 +16,4 @@ echo -e "\033[1;30m-----------------------------------------------------------\0
 echo -e "\033[1;30m            Puertos Disponibles / En ejecucion                \033[0m"
 echo -e "\033[1;30m-----------------------------------------------------------\033[0m"
 netstat -tulpn | awk -vOFS='\t' '/^tcp/{print $4,$7} /^udp/{print $4,$6}' | grep "$filter"
-rm instalar
+rm dropbear
