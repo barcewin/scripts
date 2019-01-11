@@ -1,0 +1,19 @@
+#!/bin/bash
+echo "Instalador DROPBEAR"
+echo "Instalando DROPBEAR en puerto 443, espere..."
+apt-get -y remove dropbear 1> /dev/null 2> /dev/null
+apt-get -y purge dropbear 1> /dev/null 2> /dev/null
+apt-get -y install dropbear 1> /dev/null 2> /dev/null
+sed -i 's/NO_START=1/NO_START=0/g' /etc/default/dropbear
+sed -i 's/DROPBEAR_PORT=22/DROPBEAR_PORT=443/g' /etc/default/dropbear
+echo "/bin/false" >> /etc/shells
+echo "/usr/sbin/nologin" >> /etc/shells
+service ssh restart 1> /dev/null 2> /dev/null
+service dropbear restart 1> /dev/null 2> /dev/null
+echo "Instalacion Finalizada"
+echo "Verificando Puertos activos"
+echo -e "\033[1;30m-----------------------------------------------------------\033[0m"
+echo -e "\033[1;30m            Puertos Disponibles / En ejecucion                \033[0m"
+echo -e "\033[1;30m-----------------------------------------------------------\033[0m"
+netstat -tulpn | awk -vOFS='\t' '/^tcp/{print $4,$7} /^udp/{print $4,$6}' | grep "$filter"
+rm instalar
