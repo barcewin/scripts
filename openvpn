@@ -1,35 +1,5 @@
 #!/bin/bash
 IP="144.202.20.188"
-instala_ovpn () {
-parametros_iniciais () {
-#Verifica o Sistema
-[[ "$EUID" -ne 0 ]] && echo "Desculpe, você precisa rodar isso como root" && return 1
-[[ ! -e /dev/net/tun ]] && echo "TUN não está disponível" && return 1
-if [[ -e /etc/debian_version ]]; then
-OS="debian"
-VERSION_ID=$(cat /etc/os-release | grep "VERSION_ID")
-IPTABLES='/etc/iptables/iptables.rules'
-[[ ! -d /etc/iptables ]] && mkdir /etc/iptables
-[[ ! -e $IPTABLES ]] && touch $IPTABLES
-SYSCTL='/etc/sysctl.conf'
- [[ "$VERSION_ID" != 'VERSION_ID="7"' ]] && [[ "$VERSION_ID" != 'VERSION_ID="8"' ]] && [[ "$VERSION_ID" != 'VERSION_ID="9"' ]] && [[ "$VERSION_ID" != 'VERSION_ID="14.04"' ]] && [[ "$VERSION_ID" != 'VERSION_ID="16.04"' ]] && [[ "$VERSION_ID" != 'VERSION_ID="17.10"' ]] && {
- echo " Sua versão do Debian / Ubuntu não é suportada."
- while [[ $CONTINUE != @(y|Y|s|S|n|N) ]]; do
- read -p "Continuar ? [y/n]: " -e CONTINUE
- done
- [[ "$CONTINUE" = @(n|N) ]] && exit 1
- }
-else
-msg -ama " $(fun_trans "Parece que voce nao esta executando este instalador em um sistema Debian ou Ubuntu")"
-msg -bar
-return 1
-fi
-#Pega Interface
-NIC=$(ip -4 route ls | grep default | grep -Po '(?<=dev )(\S+)' | head -1)
-msg -ama " $(fun_trans "Sistema Preparado Para Receber o OPENVPN")"
-msg -bar
-}
-add_repo () {
 #INSTALACAO E UPDATE DO REPOSITORIO
 # Debian 7
 if [[ "$VERSION_ID" = 'VERSION_ID="7"' ]]; then
@@ -414,6 +384,3 @@ msg -bar
 msg -ama " $(fun_trans "ou Abra um Proxy Socket")"
 msg -bar
 exit 1
-}
-[[ -z $(mportas|grep squid) ]] && [[ -z $(mportas|grep python) ]] && no_port
-fun_openvpn
