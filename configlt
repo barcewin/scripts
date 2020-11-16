@@ -1,5 +1,3 @@
-<?php
-
 // EXTRAS USUARIOS LIFETIME
 sudo useradd -M -d /dev/null -s /bin/false prueba1 -e 2020/07/01 -G ltg
 
@@ -14,13 +12,21 @@ GRUPO=ltg; for u in $(getent group $GRUPO | sed -e 's/^.*:.*:.*://' -e 's/,/ /g'
 cat /dev/null > /root/lifetime.db
 history -c
 
+sudo delgroup ltg --force
+addgroup ltg
+
+
+582090240
 // ACTUALIZAR
 apt-get update && apt-get upgrade -y
-
 apt-get install net-tools -y
 
-// TIEMPO
+// TIEMPO, DNS Y HOSTS
 timedatectl set-timezone America/Mexico_City
+
+nano /etc/resolv.conf
+
+nano /etc/hosts
 
 // PERMITIR CONTRASEÑAS CORTAS
 apt-get remove --auto-remove libpam-cracklib -y
@@ -29,14 +35,40 @@ apt-get remove --auto-remove libpam-cracklib -y
 passwd root
 
 // REINICIAR
+  1	  1   1  
+D L M I J V S
+
+// CRONTAB
+nano /etc/crontab
+
+# Lifetime
+59 0    * * 1-7 root    /sbin/reboot --force
+* */3   * * *   root    /bin/bash /root/limpieza.sh
+
+* */6 * * * /bin/bash /root/badvpncheck.sh > /dev/null 2>&1
+* */5 * * * /bin/bash /root/liberarmem.sh > /dev/null 2>&1
+
+* */6 * * * /bin/bash /root/badvpnstop.sh > /dev/null 2>&1
+* */6 * * * /bin/bash /root/badvpnstart.sh > /dev/null 2>&1
+
+# Premium
+SHELL=/bin/sh
+PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin
+
+59 0    * * 7 root    /sbin/reboot --force
+* */3   * * *   root    /bin/bash /root/limpieza.sh
+
 59 23 * * 7 /sbin/reboot --force > /dev/null 2>&1
 
-59 23 * * 1-7 /sbin/reboot --force > /dev/null 2>&1
+* */6 * * * /bin/bash /root/badvpncheck.sh > /dev/null 2>&1
+* */5 * * * /bin/bash /root/liberarmem.sh > /dev/null 2>&1
 
-ESTE:
-59 0 * * 1-7 /sbin/reboot --force > /dev/null 2>&1
+wget https://bnetservice.com.mx/panel/scripts/badvpncheck.sh --no-check-certificate
+dos2unix badvpncheck.sh
+chmod 777 /root/badvpncheck.sh
 
-59 23 * * 3,7 /sbin/reboot --force > /dev/null 2>&1
+* */6 * * * /bin/bash /root/badvpnstop.sh > /dev/null 2>&1
+* */6 * * * /bin/bash /root/badvpnstart.sh > /dev/null 2>&1
 
 # Cuando el bloqueo este deshabilitado
 30 23 * * * /bin/bash /root/limpiar.sh
@@ -50,10 +82,8 @@ https://www.linuxbabe.com/linux-server/how-to-enable-etcrc-local-with-systemd
 https://www.eninsoft.com/habilitar-el-rc-local-en-debian-9-stretch/
 apt-get install systemd
 systemctl status rc-local
+systemctl status rc-local.service
 
-chmod 777 /root/lifetime.db
-chmod 777 /bin/monitorsshovpn.sh
-chmod 777 /bin/monitordropssl.sh
 badvpn start
 python /root/bnet1.py &
 python /root/bnetdirecto.py &
@@ -61,22 +91,77 @@ scktcheck 8083 'bNetService' &
 scktcheckDropbear 8084 'bNetService' &
 screen -dmS monitorsshovpn /bin/monitorsshovpn.sh
 screen -dmS monitordropssl /bin/monitordropssl.sh
+
 cd /etc/openvpn
 screen -dmS ovpnscr openvpn --config "server.conf" > /dev/null 2>&1
-
-badvpn-udpgw --listen-addr 127.0.0.1:7300 > /dev/null &
 
 // PROCESO DEL PANEL
 PANEL
 
+<?php
+// INSTALACION
+rm install.sh
+wget bnetservice.com.mx/panel/install.sh --no-check-certificate
+chmod 777 install.sh
+./install.sh IP
+
+// SCRIPTS
+cd /root
+rm alterarlimite.sh
+wget bnetservice.com.mx/panel/scripts/alterarlimite.sh --no-check-certificate
+chmod 777 alterarlimite.sh
+rm  AlterarSenha.sh
+wget bnetservice.com.mx/panel/scripts/AlterarSenha.sh --no-check-certificate
+chmod 777 AlterarSenha.sh
+rm criarusuario.sh
+wget bnetservice.com.mx/panel/scripts/criarusuario.sh --no-check-certificate
+chmod 777 criarusuario.sh
+rm remover.sh
+wget bnetservice.com.mx/panel/scripts/remover.sh --no-check-certificate
+chmod 777 remover.sh
+rm sshmonitor.sh
+wget bnetservice.com.mx/panel/scripts/sshmonitor.sh --no-check-certificate
+chmod 777 sshmonitor.sh
+rm KillUser.sh
+wget bnetservice.com.mx/panel/scripts/KillUser.sh --no-check-certificate
+chmod 777 KillUser.sh
+wget bnetservice.com.mx/panel/scripts/usuarios.db
+chmod 777 usuarios.db
+wget https://bnetservice.com.mx/panel/scripts/addhost.sh --no-check-certificate -O /bin/addhost
+chmod +x /bin/addhost
+wget https://bnetservice.com.mx/panel/scripts/borrar.sh --no-check-certificate -O /bin/borrar
+chmod +x /bin/borrar
+wget https://bnetservice.com.mx/panel/scripts/cambiarfecha.sh --no-check-certificate -O /bin/cambiarfecha
+chmod +x /bin/cambiarfecha
+wget https://bnetservice.com.mx/panel/scripts/checarusuario.sh --no-check-certificate -O /bin/checarusuario
+chmod +x /bin/checarusuario
+wget https://bnetservice.com.mx/panel/scripts/delhost.sh --no-check-certificate -O /bin/delhost
+chmod +x /bin/delhost
+wget https://bnetservice.com.mx/panel/scripts/inicio.sh --no-check-certificate -O /bin/inicio
+chmod +x /bin/inicio
+wget https://bnetservice.com.mx/panel/scripts/modicontra.sh --no-check-certificate -O /bin/modicontra
+chmod +x /bin/modicontra
+wget https://bnetservice.com.mx/panel/scripts/modificarlimite.sh --no-check-certificate -O /bin/modificarlimite
+chmod +x /bin/modificarlimite
+wget https://bnetservice.com.mx/panel/scripts/speedtest.py --no-check-certificate -O /bin/speedtest.py
+chmod +x /bin/speedtest.py
+wget https://bnetservice.com.mx/panel/scripts/usernuevo.sh --no-check-certificate -O /bin/usernuevo
+chmod +x /bin/usernuevo
+wget https://bnetservice.com.mx/panel/scripts/LimpiarCache.sh --no-check-certificate -O /bin/LimpiarCache
+chmod +x /bin/LimpiarCache
+?>
+
 // INSTALAR DROPBEAR (80 / 143 / 8022) Y SSL (442 / 443 / 444)
 apt-get update && wget https://raw.githubusercontent.com/barcewin/scripts/master/dropbear && bash dropbear
+nano /etc/default/dropbear
 
 -p 80 -p 8022
 
 apt-get update && apt-get install ca-certificates && wget https://raw.githubusercontent.com/barcewin/scripts/master/ssl && bash ssl
 
 contacto@bnetservice.com.mx
+
+nano /etc/stunnel/stunnel.conf
 
 client = no 
 [ssh] 
@@ -92,34 +177,47 @@ cert = /etc/stunnel/stunnel.pem
 accept = 442 
 connect = 127.0.0.1:1194
 
+
+socket = a:SO_REUSEADDR=1
+socket = l:TCP_NODELAY=1
+socket = r:TCP_NODELAY=1
+
 // TCP, BADVPN y BBR (OPCIONAL)
 BadVPN obligatorio
 
+rm badvpn.sh
 badvpn stop
+fuser -k 7300/tcp
+fuser -k 7300/udp
 rm -r /bin/badvpn
 rm -r /usr/local/bin/badvpn-udpgw
 rm -r /usr/bin/badvpn-udpgw
-wget http://bnetservice.com.mx/panel/scripts/badvpn.sh && bash badvpn.sh
+apt-get update && apt-get upgrade && wget https://bnetservice.com.mx/panel/scripts/badvpn.sh --no-check-certificate && bash badvpn.sh
+
+apt-get update && apt-get upgrade && wget https://bnetservice.com.mx/panel/scripts/badvpn.sh --no-check-certificate && chmod +x badvpn.sh && sed -i -e 's/\r$//' badvpn.sh && ./badvpn.sh
+
+nano /bin/badvpn
+badvpn-udpgw --listen-addr 127.0.0.1:7300 --max-clients 1000 --max-connections-for-client 10 > /dev/null &
 
 // SQUID FIX
 apt-get update && apt-get upgrade -y
 apt-get install build-essential openssl libssl-dev pkg-config -y
 
 // PROXIES PYTHON
-wget https://bnetservice.com.mx/bNetService/bNetProxySSH.tar.gz
+wget https://bnetservice.com.mx/bNetService/bNetProxySSH.tar.gz --no-check-certificate
 tar -xf bNetProxySSH.tar.gz
 bash instalar bNetService
 rm -r instalar
 
-wget https://bnetservice.com.mx/bNetService/bNetProxyDROPBEAR.tar.gz
+wget https://bnetservice.com.mx/bNetService/bNetProxyDROPBEAR.tar.gz --no-check-certificate
 tar -xf bNetProxyDROPBEAR.tar.gz
 bash instalar bNetService
 rm -r instalar
 
 // OPENVPN
-wget https://bnetservice.com.mx/bNetService/newadm/instalar.sh && chmod +x instalar.sh && ./instalar.sh
+wget https://bnetservice.com.mx/bNetService/newadm/instalar.sh --no-check-certificate && chmod +x instalar.sh && ./instalar.sh
 
-// REMOVER OPENVPN DEL SISTEMA
+// REMOVER OPENVPN DEL SISTEMA DESPUÉS DE INSTALAR
 rm -r /etc/init.d/openvpn
 
 Creacion de usuario
@@ -129,34 +227,39 @@ apt-get update && apt-get upgrade -y
 
 // IMPORTAR ARCHIVOS
 Archivos
+rm limpieza.sh
+wget https://bnetservice.com.mx/panel/scripts/limpieza.sh --no-check-certificate
+chmod 777 /root/limpieza.sh
+nano limpieza.sh
+
+chmod 777 /root/lifetime.db
+chmod 777 /root/liberarmem.sh
+chmod 777 /bin/monitorsshovpn.sh
+chmod 777 /bin/monitordropssl.sh
+
 sudo service cron restart
+
+// BLOQUEAR TORRENT
+iptables -N LOGDROP > /dev/null 2> /dev/null
+iptables -F LOGDROP
+iptables -A LOGDROP -j LOG --log-prefix "LOGDROP "
+iptables -A LOGDROP -j DROP
+iptables -A FORWARD -m string --algo bm --string "BitTorrent" -j LOGDROP
+iptables -A FORWARD -m string --algo bm --string "BitTorrent protocol" -j LOGDROP
+iptables -A FORWARD -m string --algo bm --string "peer_id=" -j LOGDROP
+iptables -A FORWARD -m string --algo bm --string ".torrent" -j LOGDROP
+iptables -A FORWARD -m string --algo bm --string "announce.php?passkey=" -j LOGDROP
+iptables -A FORWARD -m string --algo bm --string "torrent" -j LOGDROP
+iptables -A FORWARD -m string --algo bm --string "announce" -j LOGDROP
+iptables -A FORWARD -m string --algo bm --string "info_hash" -j LOGDROP
+iptables -A FORWARD -m string --string "get_peers" --algo bm -j LOGDROP
+iptables -A FORWARD -m string --string "announce_peer" --algo bm -j LOGDROP
+iptables -A FORWARD -m string --string "find_node" --algo bm -j LOGDROP
 
 // VERIFICAR SERVICIOS DESPUÉS DE REBOOT
 netstat -tunlp
-
-
-Backup:
-root/usuarios.db
-etc/shadow
-etc/passwd
-etc/group
-etc/gshadow
+#
 
 // Problema de ruta (Poner en .bashrc)
 export PATH="$PATH:/sbin:/usr/sbin:usr/local/sbin"
 export PATH="$HOME/bin:/usr/local/bin:/usr/local/sbin:/usr/sbin:/sbin:/usr/bin:/bin:/usr/local/games:/usr/games"
-
-// SCRIPTS WEB
-chmod +x -R carpeta
-
-// SERVIDOR CUENTAS
-//* CONTAB *//
-59 23 * * 1-7 /sbin/reboot --force > /dev/null 2>&1
-* */1 * * * /bin/bash /etc/bnetscripts/mysql.sh > /dev/null 2>&1
-* * * * * /bin/bash /etc/bnetscripts/eliminarlt.sh > /dev/null 2>&1
-0 12 * * * /bin/bash /etc/liberarcuentas.sh > /dev/null 2>&1
-
-//* RC.LOCAL *//
-chmod +x /etc/bnetscripts/eliminarlt.sh
-
-?>
