@@ -1,29 +1,4 @@
 <?php
-NEWWW
-5579209136xxxxxx 09/24
-
-Scotia Bank
-5579209136555171, 355
-
-Banamex
-5204165586928792 09/24 042
-
-5579209136206031, 287
-
-Apoyanos compartiendo la pagina con tus amig@s
-Cuenta creada
-Esta cuenta es solamente para 1 dispositivo/login
-Guarda tus datos
-IP/Host:
-216.128.129.221
-Usuario:
-bnet-OYDZE
-Contraseña:
-35273
-
-p6$EoA)VsqQVUO1u^a
-
-89803 11:35 03/10
 
 // EXTRAS USUARIOS LIFETIME
 sudo useradd -M -d /dev/null -s /bin/false prueba1 -e 2020/07/01 -G ltg
