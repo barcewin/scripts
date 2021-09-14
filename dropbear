@@ -1,6 +1,6 @@
 #!/bin/bash
 echo "Instalador DROPBEAR"
-echo "Instalando DROPBEAR en puerto 80, espere..."
+echo "Instalando DROPBEAR en puerto 143, espere..."
 apt-get -y remove dropbear 1> /dev/null 2> /dev/null
 apt-get -y purge dropbear 1> /dev/null 2> /dev/null
 apt-get -y install dropbear 1> /dev/null 2> /dev/null
