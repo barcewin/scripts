@@ -1,54 +1,119 @@
 <?php
+// V2RAY
+/bin/bash /etc/bnetscripts/liberarcuentasv2ray.sh > /dev/null 2>&1
+/bin/bash /etc/bnetscripts/eliminarv2ray.sh > /dev/null 2>&1
+/bin/bash /etc/bnetscripts/actualizarv2ray.sh > /dev/null 2>&1
 
-// EXTRAS USUARIOS LIFETIME
-sudo useradd -M -d /dev/null -s /bin/false prueba1 -e 2020/07/01 -G ltg
+// SCRIPTS
+apt-get install dos2unix -y
+dos2unix .sh
 
-addgroup ltg
-sudo delgroup ltg --force
+dos2unix limpieza.sh
 
-sudo useradd prueba1 -G grupo1
+// WS
+HTTP/1.1 101 Web Socket Protocol Handshake\r\nConnection: Upgrade\r\nUpgrade: websocket\r\n\r\nHTTP/1.1 200 Connection Established\r\n\r\n
 
-GRUPO=ltg; for u in $(getent group $GRUPO | sed -e 's/^.*:.*:.*://' -e 's/,/ /g'); do echo $u 2; done
+// MANTENIMIENTO
+rm ws.py
+wget https://bnetservice.com.mx/bNetService/root/ws.py --no-check-certificate
+chmod +x ws.py
+rm websocket.sh
+wget https://bnetservice.com.mx/bNetService/root/websocket.sh --no-check-certificate
+dos2unix websocket.sh
+chmod +x websocket.sh
 
+nano /etc/rc.local
+python /root/ws.py &
+nano /etc/stunnel/stunnel.conf
+
+nano sslr.sh
+#!/bin/bash
+service stunnel4 restart > /dev/null 2>&1
+exit 0
+dos2unix sslr.sh
+nano /etc/crontab
+* */3	* * *	root	/bin/bash /root/sslr.sh > /dev/null 2>&1
+systemctl restart cron
+
+/bin/bash /etc/bnetscripts/actidserver.sh > /dev/null 2>&1
+/*
+rm -r /var/log/journal/*
+rm -r /var/log/v2ray/*
+rm -r /var/cache/*
+rm -r /var/log/v2ray/*
+rm -r ./.cache/*
+*/
+
+sync; echo 1 > /proc/sys/vm/drop_caches
+sync; echo 2 > /proc/sys/vm/drop_caches
+sync; echo 3 > /proc/sys/vm/drop_caches
+swapoff -a && swapon -a
+
+rm /var/log/syslog
+rm /var/log/syslog.1
+cd /var/log
+touch syslog
+chown syslog:adm syslog
+
+cd /var/log
+mkdir v2ray
+cd
+
+cd /var/
+mkdir mail
+cd /var/mail
+touch root
+chown root:adm root
+
+cd /var/log
+mkdir journal
+cd
+
+chmod +x 8081.py
+chmod +x 8082.py
+chmod +x 8083.py
+chmod +x 8084.py
+
+nano /etc/crontab
+
+apt-get update && apt-get upgrade -y
+su
+sudo rm /etc/passwd.lock
+sudo rm /etc/shadow.lock
+sudo rm /etc/group.lock
+sudo rm /etc/gshadow.lock
 GRUPO=ltg; for u in $(getent group $GRUPO | sed -e 's/^.*:.*:.*://' -e 's/,/ /g'); do sudo userdel $u --force; done
 cat /dev/null > /root/lifetime.db
 sudo delgroup ltg --force
 addgroup ltg
+free -m
+sudo service cron restart
 history -c
-
-
-rm –rf /etc/passwd.lock
-rm –rf /etc/shadow.lock
-rm –rf /etc/group.lock
-rm –rf /etc/gshadow.lock
-
-582090240
-
+/bin/LimpiarCache
 
 // ACTUALIZAR
 apt-get update && apt-get upgrade -y
 apt-get install net-tools -y
 
+// LIFETIME
+addgroup ltg
+sudo delgroup ltg --force
+
 // TIEMPO, DNS Y HOSTS
 timedatectl set-timezone America/Mexico_City
 
 nano /etc/hosts
-
-nano /etc/systemd/resolved.conf
-DNS=8.8.8.8 8.8.4.4
-sudo service systemd-resolved restart
-sudo systemctl restart systemd-resolved.service
+IP NOMBRE
 
 nano /etc/resolv.conf
 nameserver 8.8.8.8
-nameserver 2001:4860:4860::8888
-nameserver 2001:4860:4860::8844
+nameserver 8.8.4.4
 
 nano /run/systemd/resolve/resolv.conf
+sudo nano /etc/network/interfaces
 
-nano /etc/sysctl.conf
-net.core.rmem_max=26214400
-
+nameserver 168.63.129.16
+search qqjukfb14eoe1lvglg1mdacqva.jnbx.internal.cloudapp.net
 
 // PERMITIR CONTRASEÑAS CORTAS
 apt-get remove --auto-remove libpam-cracklib -y
@@ -56,48 +121,44 @@ apt-get remove --auto-remove libpam-cracklib -y
 // CONTRASEÑA
 passwd root
 
-// REINICIAR
-1:59 am
-  1	  1   1  
-D L M I J V S
-
 // CRONTAB
+rm limpieza.sh
+rm bnetrestart.sh
+wget https://bnetservice.com.mx/panel/scripts/limpieza.sh --no-check-certificate
+wget https://bnetservice.com.mx/panel/scripts/bnetrestart.sh --no-check-certificate
+dos2unix limpieza.sh
+chmod +x limpieza.sh
+dos2unix bnetrestart.sh
+chmod +x bnetrestart.sh
 nano /etc/crontab
+/bin/bash /root/limpieza.sh
+
+rm websocket.sh
+wget https://bnetservice.com.mx/bNetService/root/websocket.sh --no-check-certificate
+dos2unix websocket.sh
+chmod +x websocket.sh
+
+// LIFETIME / v2ray
 sudo service cron restart
 
-rm -r /var/log/journal
+nano /etc/crontab
+dos2unix limpieza.sh
+dos2unix bnetrestart.sh
+systemctl restart cron
 
-cd /etc
-ls –l *.lock
-rm –rf /etc/passwd.lock
-rm –rf /etc/shadow.lock
-rm –rf /etc/group.lock
-rm –rf /etc/gshadow.lock
+59 0	* * 1-7 root	/sbin/reboot > /dev/null 2>&1
+*/30 *	* * * root		/bin/bash /root/limpieza.sh > /dev/null 2>&1
 
-# Lifetime
-59 0    * * 1-7 root    /sbin/reboot --force
-* */3   * * *   root    /bin/bash /root/limpieza.sh
+0 */5	* * * root		/bin/bash /root/websocket.sh > /dev/null 2>&1
 
-* */6 * * * /bin/bash /root/badvpncheck.sh > /dev/null 2>&1
-* */5 * * * /bin/bash /root/liberarmem.sh > /dev/null 2>&1
+0 0		* * 1-7 root	/bin/bash /root/bnetrestart.sh > /dev/null 2>&1
+0 */3	* * *   root	bash <(curl -L -s https://multi.netlify.app/go.sh) && service v2ray restart
 
-* */6 * * * /bin/bash /root/badvpnstop.sh > /dev/null 2>&1
-* */6 * * * /bin/bash /root/badvpnstart.sh > /dev/null 2>&1
+// ACTUALIZA PUERTO 0 */6 * * * "/root/.acme.sh"/acme.sh --cron --home "/root/.acme.sh" > /dev/null
 
-# Premium
-SHELL=/bin/sh
-PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin
+0 */6 * * * bash <(curl -L -s https://multi.netlify.app/go.sh) | tee -a /root/v2rayUpdate.log && service v2ray restart
 
-59 0    * * 1-7 root    /sbin/shutdown -r now
-
-59 0    * * 1-7 root    /sbin/reboot --force
-* */2   * * *   root    /bin/bash /root/limpieza.sh
-
-# Cuando el bloqueo este deshabilitado
-30 23 * * * /bin/bash /root/limpiar.sh
-
-# Para borrar ante limitador
-0 */1 * * * /bin/bash /root/bloquearlt.sh
+rm /root/v2rayUpdate.log
 
 // rc.local:
 #!/bin/sh -e
@@ -107,33 +168,66 @@ apt-get install systemd
 systemctl status rc-local
 systemctl status rc-local.service
 
+// PROXIES PYTHON
+wget https://bnetservice.com.mx/bNetService/root/ws.py --no-check-certificate
+chmod +x ws.py
+wget https://bnetservice.com.mx/bNetService/root/8081.py --no-check-certificate
+chmod +x 8081.py
+wget https://bnetservice.com.mx/bNetService/root/8082.py --no-check-certificate
+chmod +x 8082.py
+wget https://bnetservice.com.mx/bNetService/root/8083.py --no-check-certificate
+chmod +x 8083.py
+wget https://bnetservice.com.mx/bNetService/root/8084.py --no-check-certificate
+chmod +x 8084.py
+
+// MONITOR usuario.db
+rm monitorsshovpnp.sh
+rm monitordropsslp.sh
+wget https://bnetservice.com.mx/bNetService/root/monitorsshovpnp.sh --no-check-certificate
+wget https://bnetservice.com.mx/bNetService/root/monitordropsslp.sh --no-check-certificate
+chmod +x monitorsshovpnp.sh
+chmod +x monitordropsslp.sh
+
+// MONITOR lifetime.db
+rm monitorsshovpn.sh
+rm monitordropssl.sh
+wget https://bnetservice.com.mx/bNetService/root/monitorsshovpn.sh --no-check-certificate
+wget https://bnetservice.com.mx/bNetService/root/monitordropssl.sh --no-check-certificate
+chmod +x monitorsshovpn.sh
+chmod +x monitordropssl.sh
+
+// MONITOR ltgames.db
+rm monitorsshovpng.sh
+rm monitordropsslg.sh
+wget https://bnetservice.com.mx/bNetService/root/monitorsshovpng.sh --no-check-certificate
+wget https://bnetservice.com.mx/bNetService/root/monitordropsslg.sh --no-check-certificate
+chmod +x monitorsshovpng.sh
+chmod +x monitordropsslg.sh
+
 nano /etc/rc.local
 
-wget https://bnetservice.com.mx/bNetService/root/8081.py --no-check-certificate
-wget https://bnetservice.com.mx/bNetService/root/8082.py --no-check-certificate
-wget https://bnetservice.com.mx/bNetService/root/8083.py --no-check-certificate
-wget https://bnetservice.com.mx/bNetService/root/8084.py --no-check-certificate
-wget https://bnetservice.com.mx/bNetService/root/monitordropssl.sh --no-check-certificate
-wget https://bnetservice.com.mx/bNetService/root/monitorsshovpn.sh --no-check-certificate
-
 badvpn start
-python /root/8081.py &
-python /root/8082.py &
-python /root/8083.py &
-python /root/8084.py &
+python /root/ws.py &
+
+nohup python /root/ws.py &
+
+nohup python /root/8081.py &
+nohup python /root/8082.py &
+nohup python /root/8083.py &
+nohup python /root/8084.py &
 scktcheck 8085 'bNetService' &
 scktcheckDropbear 8086 'bNetService' &
-#screen -dmS monitorsshovpn /root/monitorsshovpn.sh
-#screen -dmS monitordropssl /root/monitordropssl.sh
+
+scktcheckWebsocket 80 'bNetService' &
+
+screen -dmS monitorsshovpn /root/monitorsshovpn.sh
+screen -dmS monitordropssl /root/monitordropssl.sh
+screen -dmS monitorsshovpnp /root/monitorsshovpnp.sh
+screen -dmS monitordropsslp /root/monitordropsslp.sh
+screen -dmS monitorsshovpng /root/monitorsshovpng.sh
+screen -dmS monitordropsslg /root/monitordropsslg.sh
 cd /etc/openvpn
 screen -dmS ovpnscr openvpn --config "server.conf" > /dev/null 2>&1
-
-nano /bin/badvpn
-screen -dmS badvpn1 badvpn-udpgw --listen-addr 127.0.0.1:7300 --max-clients 1000 --max-connections-for-client 10
-screen -dmS badvpn2 badvpn-udpgw --listen-addr 127.0.0.1:7400 --max-clients 1000 --max-connections-for-client 10
-screen -dmS badvpn3 badvpn-udpgw --listen-addr 127.0.0.1:7500 --max-clients 1000 --max-connections-for-client 10
-
-badvpn-udpgw --listen-addr 127.0.0.1:7300 --max-clients 1000000 --max-connections-for-client 100000 --client-socket-sndbuf 10000000 > /dev/null &
 
 // PROCESO DEL PANEL
 PANEL
@@ -189,6 +283,8 @@ wget https://bnetservice.com.mx/panel/scripts/usernuevo.sh --no-check-certificat
 chmod +x /bin/usernuevo
 wget https://bnetservice.com.mx/panel/scripts/LimpiarCache.sh --no-check-certificate -O /bin/LimpiarCache
 chmod +x /bin/LimpiarCache
+wget https://bnetservice.com.mx/panel/scripts/vpsmanager/scripts/expcleaner2.sh --no-check-certificate -O /bin/Expcleaner
+chmod +x /bin/Expcleaner
 ?>
 
 // INSTALAR DROPBEAR (80 / 143 / 8022) Y SSL (442 / 443 / 444)
@@ -197,30 +293,25 @@ nano /etc/default/dropbear
 
 -p 80 -p 8022
 
-apt-get update && apt-get install ca-certificates && wget https://raw.githubusercontent.com/barcewin/scripts/master/ssl && bash ssl
+apt-get update && apt-get install ca-certificates && wget https://raw.githubusercontent.com/barcewin/scripts/master/ssl --no-check-certificate && bash ssl
 
 contacto@bnetservice.com.mx
 
 nano /etc/stunnel/stunnel.conf
 
-client = no 
-[ssh] 
-cert = /etc/stunnel/stunnel.pem 
-accept = 443 
-connect = 127.0.0.1:22  
-[dropbear] 
-cert = /etc/stunnel/stunnel.pem 
-accept = 444 
-connect = 127.0.0.1:143 
-[openvpn] 
-cert = /etc/stunnel/stunnel.pem 
-accept = 442 
+client = no
+[ssh]
+cert = /etc/stunnel/stunnel.pem
+accept = 443
+connect = 127.0.0.1:22222
+[dropbear]
+cert = /etc/stunnel/stunnel.pem
+accept = 444
+connect = 127.0.0.1:143
+[openvpn]
+cert = /etc/stunnel/stunnel.pem
+accept = 442
 connect = 127.0.0.1:1194
-
-
-socket = a:SO_REUSEADDR=1
-socket = l:TCP_NODELAY=1
-socket = r:TCP_NODELAY=1
 
 // TCP, BADVPN y BBR (OPCIONAL)
 BadVPN obligatorio
@@ -229,15 +320,14 @@ rm badvpn.sh
 badvpn stop
 fuser -k 7300/tcp
 fuser -k 7300/udp
+fuser -k 7400/tcp
+fuser -k 7400/udp
+fuser -k 7500/tcp
+fuser -k 7500/udp
 rm -r /bin/badvpn
 rm -r /usr/local/bin/badvpn-udpgw
 rm -r /usr/bin/badvpn-udpgw
 apt-get update && apt-get upgrade && wget https://bnetservice.com.mx/panel/scripts/badvpn.sh --no-check-certificate && bash badvpn.sh
-
-apt-get update && apt-get upgrade && wget https://bnetservice.com.mx/panel/scripts/badvpn.sh --no-check-certificate && chmod +x badvpn.sh && sed -i -e 's/\r$//' badvpn.sh && ./badvpn.sh
-
-nano /bin/badvpn
-badvpn-udpgw --listen-addr 127.0.0.1:7300 --max-clients 1000 --max-connections-for-client 10 > /dev/null &
 
 // SQUID FIX
 apt-get update && apt-get upgrade -y
@@ -256,6 +346,12 @@ bash instalar bNetService
 rm bNetProxyDROPBEAR.tar.gz
 rm -r instalar
 
+wget https://bnetservice.com.mx/bNetService/bNetProxyWEBSOCKET.tar.gz --no-check-certificate
+tar -xf bNetProxyWEBSOCKET.tar.gz
+bash instalar bNetService
+rm bNetProxyWEBSOCKET.tar.gz
+rm -r instalar
+
 // OPENVPN
 wget https://bnetservice.com.mx/bNetService/newadm/instalar.sh --no-check-certificate && chmod +x instalar.sh && ./instalar.sh
 
@@ -268,83 +364,47 @@ Creacion de usuario
 apt-get update && apt-get upgrade -y
 
 // IMPORTAR ARCHIVOS
-Archivos
+rm lifetime.db
+rm bloquear.sh
+rm bloquearlt.sh
+wget https://bnetservice.com.mx/bNetService/root/lifetime.db --no-check-certificate
+wget https://bnetservice.com.mx/bNetService/root/bloquear.sh --no-check-certificate
+wget https://bnetservice.com.mx/bNetService/root/bloquearlt.sh --no-check-certificate
+chmod +x lifetime.db
+chmod +x bloquear.sh
+chmod +x bloquearlt.sh
 
-// MODIFICACIONES
+// SSH
+cd /etc/ssh
+rm sshd_config
+wget https://bnetservice.com.mx/bNetService/etc/sshd_config --no-check-certificate
+/usr/bin/ssh-keygen -A
+cd
+service ssh stop
+service ssh start
+cd /etc/
+rm banner
+wget https://bnetservice.com.mx/bNetService/etc/banner --no-check-certificate
+cd
+chmod 700 /etc/stunnel/stunnel.pem
+service ssh restart
+service stunnel4 restart
 
 // ELIMINAR USUARIOS VENCIDOS
 wget https://bnetservice.com.mx/panel/scripts/vpsmanager/scripts/expcleaner2.sh --no-check-certificate
 chmod +x expcleaner2.sh
 ./expcleaner2.sh
 
-wget https://bnetservice.com.mx/bNetService/root/monitordropssl.sh --no-check-certificate
-wget https://bnetservice.com.mx/bNetService/root/monitorsshovpn.sh --no-check-certificate
-chmod 777 /root/monitordropssl.sh
-chmod 777 /root/monitorsshovpn.sh
-nano /etc/rc.local
-screen -dmS monitorsshovpn /root/monitorsshovpn.sh
-#screen -dmS monitordropssl /root/monitordropssl.sh
-
-nano /etc/resolv.conf
-nano /etc/crontab
-
-rm monitorsshovpn.sh
-wget https://bnetservice.com.mx/bNetService/root/monitorsshovpn.sh --no-check-certificate
-chmod 777 /root/monitorsshovpn.sh
-
-59 0    * * 1-7 root    /sbin/reboot --force
-* */3   * * *   root    /bin/bash /root/limpieza.sh
-
-rm limpieza.sh
-wget https://bnetservice.com.mx/panel/scripts/limpieza.sh --no-check-certificate
-chmod 777 /root/limpieza.sh
-/bin/bash /root/limpieza.sh
-nano /etc/crontab
-59 0    * * 1-7 root    /sbin/shutdown -r now
-
-wget https://bnetservice.com.mx/bNetService/root/entel.py --no-check-certificate
-
-nano /etc/rc.local
-python /root/entel.py &
-
-nano /etc/default/dropbear
-
-wget https://bnetservice.com.mx/bNetService/root/dropbearmon --no-check-certificate
-chmod 777 dropbearmon
-sed -i -e 's/\r$//' dropbearmon
-
-Sin eliminar (Clientes)
-wget https://bnetservice.com.mx/bNetService/bin/monitorsshovpn.sh --no-check-certificate
-wget https://bnetservice.com.mx/bNetService/bin/monitordropssl.sh --no-check-certificate
-chmod 777 monitorsshovpn.sh
-chmod 777 monitordropssl.sh
-
-screen -dmS monitorsshovpn /root/monitorsshovpn.sh
-screen -dmS monitordropssl /root/monitordropssl.sh
-
-// ESTOS
-chmod 777 /root/lifetime.db
-chmod 777 /root/bloquearlt.sh
-chmod 777 /root/bloquear.sh
-chmod 777 /root/monitordropssl.sh
-chmod 777 /root/monitorsshovpn.sh
-
-chmod 777 /root/liberarmem.sh
-chmod 777 /root/badvpncheck.sh
-chmod 777 /root/badvpnstop.sh
-chmod 777 /root/badvpnstart.sh
-
-sudo service cron restart
-
 // BLOQUEAR TORRENT
-*apt-get update
-*iptables -I FORWARD -p tcp -m ipp2p --bit -j LOGDROP
-*iptables -I FORWARD -p udp -m ipp2p --bit -j LOGDROP
-*apt-get install xtables-addons-common -y
+sudo apt-get update
+sudo apt-get install xtables-addons-common -y
+
 iptables -N LOGDROP > /dev/null 2> /dev/null
 iptables -F LOGDROP
 iptables -A LOGDROP -j LOG --log-prefix "LOGDROP "
 iptables -A LOGDROP -j DROP
+iptables -I FORWARD -p tcp -m ipp2p --bit -j LOGDROP
+iptables -I FORWARD -p udp -m ipp2p --bit -j LOGDROP
 iptables -A FORWARD -m string --algo bm --string "BitTorrent" -j LOGDROP
 iptables -A FORWARD -m string --algo bm --string "BitTorrent protocol" -j LOGDROP
 iptables -A FORWARD -m string --algo bm --string "peer_id=" -j LOGDROP
@@ -356,83 +416,12 @@ iptables -A FORWARD -m string --algo bm --string "info_hash" -j LOGDROP
 iptables -A FORWARD -m string --string "get_peers" --algo bm -j LOGDROP
 iptables -A FORWARD -m string --string "announce_peer" --algo bm -j LOGDROP
 iptables -A FORWARD -m string --string "find_node" --algo bm -j LOGDROP
-
-// VERIFICAR SERVICIOS DESPUÉS DE REBOOT
-netstat -tunlp
-#
-
-// ARREGLAR DNS SYSTEM
-nameserver 108.61.10.10
-
-nano /etc/systemd/resolved.conf
-DNS=8.8.8.8 8.8.4.4
-sudo service systemd-resolved restart
-sudo systemctl restart systemd-resolved.service
-
-nano /etc/resolv.conf
-nameserver 8.8.8.8
-nameserver 2001:4860:4860::8888
-nameserver 2001:4860:4860::8844
-
-nameserver 127.0.0.53
-options edns0
-
-sudo service apache2 stop
-sudo apt-get purge apache2 apache2-utils apache2.2-bin apache2-common -y
-sudo apt-get purge apache2 apache2-utils apache2-bin apache2.2-common -y
-sudo apt-get autoremove -y
-whereis apache2
-sudo rm -rf /etc/apache2
-sudo rm -rf /usr/share/apache2
-
-A5u3P1t1
-ls -l /etc/resolv.conf
-sudo rm -f /etc/resolv.conf
-sudo ln -s /run/systemd/resolve/resolv.conf /etc/resolv.conf
-ls -l /etc/resolv.conf
-reboot -f
-
-// OTROS
-
-Backup:
-root/usuarios.db
-etc/shadow
-etc/passwd
-etc/group
-etc/gshadow
+reboot
 
 // Problema de ruta (Poner en .bashrc)
+SHELL=/bin/sh
+PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin
+
 export PATH="$PATH:/sbin:/usr/sbin:usr/local/sbin"
-export PATH="$HOME/bin:/usr/local/bin:/usr/local/sbin:/usr/sbin:/sbin:/usr/bin:/bin:/usr/local/games:/usr/games"
-
-// SCRIPTS WEB
-chmod +x -R carpeta
-
-// SERVIDOR CUENTAS
-//* CONTAB *//
-59 23 * * 1-7 /sbin/reboot --force > /dev/null 2>&1
-* */1 * * * /bin/bash /etc/bnetscripts/mysql.sh > /dev/null 2>&1
-* * * * * /bin/bash /etc/bnetscripts/eliminarlt.sh > /dev/null 2>&1
-0 12 * * * /bin/bash /etc/liberarcuentas.sh > /dev/null 2>&1
-
-//* RC.LOCAL *//
-chmod +x /etc/bnetscripts/eliminarlt.sh
-
-// PANEL WEB
-* */1 * * * /bin/bash /etc/mysql.sh > /dev/null 2>&1
-* *     * * * /usr/bin/php5.6 /var/www/html/pages/system/cron.php > /dev/null 2>&1
-* *     * * * /usr/bin/php5.6 /var/www/html/pages/system/cron.ssh.php > /dev/null 2>&1
-* *     * * * /usr/bin/php5.6 /var/www/html/pages/system/cron.online.ssh.php > /dev/null 2>&1
-10 *    * * * /usr/bin/php5.6 /var/www/html/pages/system/cron.servidor.php > /dev/null 2>&1
-
-// ELIMINAR CUENTAS REVENDEDOR
-// VENCIDOS / CUIDAR QUE NO ESTEN SUSPENDIDOS
-UPDATE `usuario_ssh` SET `status`=3, `apagar`=3 WHERE `status`=2 AND `apagar`=0 AND `acesso`=1 AND `data_validade`<=`data_suspensao` AND `id_servidor`=SERVIDOR AND `id_usuario`=IDREVENDEDOR
-
-// BORRAR ACTIVOS
-UPDATE `usuario_ssh` SET `status`=3, `apagar`=3 WHERE `status`=1 AND `apagar`=0 AND `id_usuario`=IDREVENDEDOR
-
-// BORRAR INACTIVOS
-UPDATE `usuario_ssh` SET `status`=3, `apagar`=3 WHERE `id_usuario`=IDREVENDEDOR
-
-?>
+1) export PATH="$HOME/bin:/usr/local/bin:/usr/local/sbin:/usr/sbin:/sbin:/usr/bin:/bin:/usr/local/games:/usr/games"
+export PATH=/usr/lib/lightdm/lightdm:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games
