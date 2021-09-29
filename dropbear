@@ -121,4 +121,4 @@ echo " Saliendo..."
 exit
 ;;
 esac
-rm install
+rm dropbear
