@@ -1,19 +1,124 @@
 #!/bin/bash
-echo "Instalador DROPBEAR"
-echo "Instalando DROPBEAR en puerto 143, espere..."
+clear
+echo ""
+
+echo "INSTALADOR DROPBEAR: ALTERNATIVO"
+
+echo "ESCOGE UNA DISTRIBUCION:"
+
+echo ""
+
+echo "1. Ubuntu e Debian"
+
+echo "2. CentOs 7"
+
+echo "3. CentOs 6: 64bits"
+
+echo "4. Salir"
+
+echo ""
+
+echo -n "Escoge una opcion? "
+
+read opcao
+
+case $opcao in
+
+1)
+clear
 apt-get -y remove dropbear 1> /dev/null 2> /dev/null
 apt-get -y purge dropbear 1> /dev/null 2> /dev/null
-apt-get -y install dropbear 1> /dev/null 2> /dev/null
-sed -i 's/NO_START=1/NO_START=0/g' /etc/default/dropbear
-sed -i 's/DROPBEAR_PORT=22/DROPBEAR_PORT=143/g' /etc/default/dropbear
+echo ""
+echo "Instalando Dropbear"
+
+apt-get install dropbear -y
+
+rm -rf /etc/default/dropbear
+
 echo "/bin/false" >> /etc/shells
-echo "/usr/sbin/nologin" >> /etc/shells
-service ssh restart 1> /dev/null 2> /dev/null
-service dropbear restart 1> /dev/null 2> /dev/null
-echo "Instalacion Finalizada"
-echo "Verificando Puertos activos"
-echo -e "\033[1;30m-----------------------------------------------------------\033[0m"
-echo -e "\033[1;30m            Puertos Disponibles / En ejecucion                \033[0m"
-echo -e "\033[1;30m-----------------------------------------------------------\033[0m"
-netstat -tulpn | awk -vOFS='\t' '/^tcp/{print $4,$7} /^udp/{print $4,$6}' | grep "$filter"
-rm dropbear
+
+echo ""
+
+echo "Cual puerto deseas agregar a Dropbear ?"
+read port
+
+echo "NO_START=0" >> /etc/default/dropbear
+echo "DROPBEAR_PORT=$port" >> /etc/default/dropbear
+echo "DROPBEAR_EXTRA_ARGS='-p $port'" >> /etc/default/dropbear
+
+service dropbear start 
+service dropbear restart 
+
+echo "puerto $port agregado"
+
+echo "DROPBEAR CONFIGURADO."
+
+
+;;
+
+2)
+clear
+echo ""
+echo "Instalando Dropbear"
+sleep 2
+
+rpm -Uvh http://ftp-stud.hs-esslingen.de/pub/epel/7/x86_64/Packages/e/epel-release-7-11.noarch.rpm
+
+yum -y install dropbear -y
+
+rm -rf /etc/sysconfig/dropbear 
+
+echo "Cual puerto deseas agregar a Dropbear ?"
+read port
+
+echo "OPTIONS='-p $port'" >> /etc/sysconfig/dropbear
+
+chkconfig dropbear on 1>/dev/null 2>/dev/null 
+systemctl enable dropbear.service 1>/dev/null 2>/dev/null 
+systemctl start dropbear.service 1>/dev/null 2>/dev/null 
+
+echo "/bin/false" >> /etc/shells
+
+systemctl restart dropbear.service 1>/dev/null 2>/dev/null
+
+echo "porta $port adicionada"
+
+echo "DROPBEAR CONFIGURADO"
+
+;;
+
+3)
+clear
+echo ""
+echo "Instalando Dropbear"
+sleep 2
+
+rpm -Uvh http://ftp-stud.hs-esslingen.de/pub/epel/6/x86_64/epel-release-6-8.noarch.rpm
+
+yum -y install dropbear -y
+
+rm -rf /etc/init.d/dropbear 
+
+echo "Cual puerto deseas agregar a Dropbear ?"
+read port
+
+echo "OPTIONS='-p $port'" >> /etc/init.d/dropbear
+
+service dropbear start 1>/dev/null 2>/dev/null 
+
+echo "/bin/false" >> /etc/shells
+
+service dropbear restart 1>/dev/null 2>/dev/null
+
+echo "puerto $port agregado"
+
+echo "DROPBEAR CONFIGURADO."
+
+;;
+
+4)
+echo " Saliendo..."
+exit
+;;
+esac
+rm install
