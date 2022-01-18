@@ -44,7 +44,7 @@ read port
 
 echo "NO_START=0" >> /etc/default/dropbear
 echo "DROPBEAR_PORT=$port" >> /etc/default/dropbear
-echo "DROPBEAR_EXTRA_ARGS='-p 80 -p 8022'" >> /etc/default/dropbear
+echo "DROPBEAR_EXTRA_ARGS='-p 8022'" >> /etc/default/dropbear
 echo "DROPBEAR_BANNER='/etc/banner'" >> /etc/default/dropbear
 
 service dropbear start 
