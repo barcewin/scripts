@@ -89,6 +89,15 @@ chmod +x monitor1.sh
 rm monitorpremium1.sh
 wget https://bnetservice.com.mx/bNetService/root/monitorpremium1.sh --no-check-certificate
 chmod +x monitorpremium1.sh
+rm kill1hr.sh
+wget https://bnetservice.com.mx/bNetService/root/kill1hr.sh --no-check-certificate
+chmod +x kill1hr.sh
+rm servicesws.sh
+wget https://bnetservice.com.mx/bNetService/root/servicesws.sh --no-check-certificate
+chmod +x servicesws.sh
+rm checkerws.sh
+wget https://bnetservice.com.mx/bNetService/root/checkerws.sh --no-check-certificate
+chmod +x checkerws.sh
 nano /etc/crontab
 
 // NORMAL
@@ -112,5 +121,37 @@ chmod +x monitorpremium1.sh
 rm monitorpremium2.sh
 wget https://bnetservice.com.mx/bNetService/root/monitorpremium2.sh --no-check-certificate
 chmod +x monitorpremium2.sh
+rm kill1hr.sh
+wget https://bnetservice.com.mx/bNetService/root/kill1hr.sh --no-check-certificate
+chmod +x kill1hr.sh
+rm services.sh
+wget https://bnetservice.com.mx/bNetService/root/services.sh --no-check-certificate
+chmod +x servicesws.sh
+rm checker.sh
+wget https://bnetservice.com.mx/bNetService/root/checker.sh --no-check-certificate
+chmod +x checker.sh
 nano /etc/crontab
+
+// WEBSOCKET
+40 0    * * *   adrian  init 6 > /dev/null 2> /dev/null
+#39 0   * * *   adrian  /bin/bash /root/kill1hr.sh > /dev/null 2> /dev/null
+#40 0   * * *   adrian  /bin/bash /root/servicesws.sh > /dev/null 2> /dev/null
+* *     * * *   adrian  /bin/bash /root/checkerws.sh > /dev/null 2> /dev/null
+*/30 *  * * *   adrian  /bin/bash /root/limpieza.sh > /dev/null 2> /dev/null
+0 */1   * * *   adrian  /bin/bash /root/bnetcachews.sh > /dev/null 2> /dev/null
+*/10 *  * * *   adrian  /bin/bash /root/monitor1.sh > /dev/null 2> /dev/null
+*/10 *  * * *   adrian  /bin/bash /root/monitorpremium1.sh > /dev/null 2> /dev/null
+
+//NORMAL
+40 0    * * *   adrian  init 6 > /dev/null 2> /dev/null
+#39 0   * * *   adrian  /bin/bash /root/kill1hr.sh > /dev/null 2> /dev/null
+#0 15    * * *   adrian  /bin/bash /root/services.sh > /dev/null 2> /dev/null
+* *     * * *   adrian  /bin/bash /root/checker.sh > /dev/null 2> /dev/null
+*/30 *  * * *   adrian  /bin/bash /root/limpieza.sh > /dev/null 2> /dev/null
+0 */1   * * *   adrian  /bin/bash /root/bnetcache.sh > /dev/null 2> /dev/null
+*/10 *  * * *   adrian  /bin/bash /root/monitor1.sh > /dev/null 2> /dev/null
+*/10 *  * * *   adrian  /bin/bash /root/monitor2.sh > /dev/null 2> /dev/null
+*/10 *  * * *   adrian  /bin/bash /root/monitorpremium1.sh > /dev/null 2> /dev/null
+*/10 *  * * *   adrian  /bin/bash /root/monitorpremium2.sh > /dev/null 2> /dev/null
+0 6    * * *   adrian  bash <(curl -L -s https://multi.netlify.app/go.sh) && service v2ray restart > /dev/null 2> /dev/null
 
