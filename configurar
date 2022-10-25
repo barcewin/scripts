@@ -1,0 +1,116 @@
+<?php
+
+// CONTRASEÑAS
+apt-get remove --auto-remove libpam-cracklib -y
+passwd root
+
+// USER
+useradd ?
+
+passwd ?
+
+nano /etc/passwd
+
+?:x:0:0::/root:/bin/bash
+
+// HORARIO
+timedatectl set-timezone America/Mexico_City
+ln -fs /usr/share/zoneinfo/America/Mexico_City /etc/localtime
+
+// DNS
+nano /etc/hosts
+IP NOMBRE
+
+nano /etc/network/interfaces
+
+nano /etc/resolvconf/resolv.conf.d/original
+
+# Verificar
+nano /etc/systemd/resolved.conf
+
+nano /run/systemd/resolve/resolv.conf
+
+// UPDATE
+su
+ufw disable
+systemctl disable ufw
+df -h
+fdisk -l
+resize2fs /dev/vda1
+resize2fs /dev/vda2
+
+apt-get -y --purge remove samba*;
+apt-get -y --purge remove apache2*;
+apt-get -y --purge remove bind9*;
+
+apt-get install dos2unix lsof iptables build-essential psmisc curl python python3 python-pip -y
+
+// TCP, BADVPN y BBR (OPCIONAL)
+BadVPN obligatorio
+
+rm badvpn129.sh
+rm badvpn.sh
+badvpn stop
+fuser -k 7300/tcp
+fuser -k 7300/udp
+fuser -k 7400/tcp
+fuser -k 7400/udp
+fuser -k 7500/tcp
+fuser -k 7500/udp
+killall badvpn-udpgw
+pkill badvpn-udpgw
+rm -r /bin/badvpn
+rm -r /usr/local/bin/badvpn-udpgw
+rm -r /usr/bin/badvpn-udpgw
+rm /bin/badvpn-udpgw
+apt-get update && apt-get upgrade && wget https://bnetservice.com.mx/panel/scripts/badvpn.sh --no-check-certificate && bash badvpn.sh
+
+apt-get update -y
+apt-get upgrade -y
+
+// GRUPO DE USUARIOS
+addgroup ltg
+
+sudo delgroup ltg --force
+
+// CONTRAB
+// WEBSOCKET
+rm bnetcachews.sh
+wget https://bnetservice.com.mx/bNetService/root/bnetcachews.sh --no-check-certificate
+dos2unix bnetcachews.sh
+chmod +x bnetcachews.sh
+rm limpieza.sh
+wget https://bnetservice.com.mx/panel/scripts/limpieza.sh --no-check-certificate
+dos2unix limpieza.sh
+chmod +x limpieza.sh
+rm monitor1.sh
+wget https://bnetservice.com.mx/bNetService/root/monitor1.sh --no-check-certificate
+chmod +x monitor1.sh
+rm monitorpremium1.sh
+wget https://bnetservice.com.mx/bNetService/root/monitorpremium1.sh --no-check-certificate
+chmod +x monitorpremium1.sh
+nano /etc/crontab
+
+// NORMAL
+rm bnetcache.sh
+wget https://bnetservice.com.mx/bNetService/root/bnetcache.sh --no-check-certificate
+dos2unix bnetcache.sh
+chmod +x bnetcache.sh
+rm limpieza.sh
+wget https://bnetservice.com.mx/panel/scripts/limpieza.sh --no-check-certificate
+dos2unix limpieza.sh
+chmod +x limpieza.sh
+rm monitor1.sh
+wget https://bnetservice.com.mx/bNetService/root/monitor1.sh --no-check-certificate
+chmod +x monitor1.sh
+rm monitor2.sh
+wget https://bnetservice.com.mx/bNetService/root/monitor2.sh --no-check-certificate
+chmod +x monitor2.sh
+rm monitorpremium1.sh
+wget https://bnetservice.com.mx/bNetService/root/monitorpremium1.sh --no-check-certificate
+chmod +x monitorpremium1.sh
+rm monitorpremium2.sh
+wget https://bnetservice.com.mx/bNetService/root/monitorpremium2.sh --no-check-certificate
+chmod +x monitorpremium2.sh
+nano /etc/crontab
+
