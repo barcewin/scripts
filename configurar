@@ -22,15 +22,18 @@ ln -fs /usr/share/zoneinfo/America/Mexico_City /etc/localtime
 nano /etc/hosts
 IP NOMBRE
 
-systemctl disable systemd-resolved
+apt-get install resolvconf
 
-apt install resolvconf
+systemctl start resolvconf.service
+systemctl enable resolveconf.service
 
 nano /etc/network/interfaces
 
 nano /etc/resolvconf/resolv.conf.d/original
 
 nano /etc/resolv.conf
+
+systemctl disable systemd-resolved
 
 # Verificar
 nano /etc/systemd/resolved.conf
