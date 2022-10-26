@@ -155,3 +155,246 @@ nano /etc/crontab
 */10 *  * * *   adrian  /bin/bash /root/monitorpremium2.sh > /dev/null 2> /dev/null
 0 6    * * *   adrian  bash <(curl -L -s https://multi.netlify.app/go.sh) && service v2ray restart > /dev/null 2> /dev/null
 
+// rc.local
+nano /etc/systemd/system/rc-local.service
+
+[Unit]
+ Description=/etc/rc.local Compatibility
+ ConditionPathExists=/etc/rc.local
+
+[Service]
+ Type=forking
+ ExecStart=/etc/rc.local start
+ TimeoutSec=0
+ StandardOutput=tty
+ RemainAfterExit=yes
+ SysVStartPriority=99
+
+[Install]
+ WantedBy=multi-user.target
+ 
+nano /etc/rc.local
+
+#!/bin/bash
+
+exit 0
+
+chmod +x /etc/rc.local
+systemctl enable rc-local
+systemctl start rc-local.service
+systemctl status rc-local.service
+
+nano /etc/rc.local
+
+// WEBSOCKET
+#!/bin/bash
+iptables -N LOGDROP > /dev/null 2>&1
+iptables -F LOGDROP
+iptables -A LOGDROP -j LOG --log-prefix "LOGDROP "
+iptables -A LOGDROP -j DROP
+iptables -I FORWARD -p tcp -m ipp2p --bit -j LOGDROP
+iptables -I FORWARD -p udp -m ipp2p --bit -j LOGDROP
+iptables -A FORWARD -m string --algo bm --string "BitTorrent" -j LOGDROP
+iptables -A FORWARD -m string --algo bm --string "BitTorrent protocol" -j LOGDROP
+iptables -A FORWARD -m string --algo bm --string "peer_id=" -j LOGDROP
+iptables -A FORWARD -m string --algo bm --string ".torrent" -j LOGDROP
+iptables -A FORWARD -m string --algo bm --string "announce.php?passkey=" -j LOGDROP
+iptables -A FORWARD -m string --algo bm --string "torrent" -j LOGDROP
+iptables -A FORWARD -m string --algo bm --string "announce" -j LOGDROP
+iptables -A FORWARD -m string --algo bm --string "info_hash" -j LOGDROP
+iptables -A FORWARD -m string --string "get_peers" --algo bm -j LOGDROP
+iptables -A FORWARD -m string --string "announce_peer" --algo bm -j LOGDROP
+iptables -A FORWARD -m string --string "find_node" --algo bm -j LOGDROP
+iptables -I INPUT -p tcp --dport 25 -j DROP
+iptables -I INPUT -p udp --dport 25 -j DROP
+iptables -I FORWARD -p tcp --dport 25 -j DROP
+iptables -I FORWARD -p udp --dport 25 -j DROP
+service cron restart
+service ssh restart
+service dropbear restart
+service stunnel5 restart
+badvpn start
+fuser -k 80/tcp
+python /root/ws.py & > /dev/null 2>&1
+exit 0
+
+// NORMAL
+#!/bin/bash
+iptables -N LOGDROP > /dev/null 2>&1
+iptables -F LOGDROP
+iptables -A LOGDROP -j LOG --log-prefix "LOGDROP "
+iptables -A LOGDROP -j DROP
+iptables -I FORWARD -p tcp -m ipp2p --bit -j LOGDROP
+iptables -I FORWARD -p udp -m ipp2p --bit -j LOGDROP
+iptables -A FORWARD -m string --algo bm --string "BitTorrent" -j LOGDROP
+iptables -A FORWARD -m string --algo bm --string "BitTorrent protocol" -j LOGDROP
+iptables -A FORWARD -m string --algo bm --string "peer_id=" -j LOGDROP
+iptables -A FORWARD -m string --algo bm --string ".torrent" -j LOGDROP
+iptables -A FORWARD -m string --algo bm --string "announce.php?passkey=" -j LOGDROP
+iptables -A FORWARD -m string --algo bm --string "torrent" -j LOGDROP
+iptables -A FORWARD -m string --algo bm --string "announce" -j LOGDROP
+iptables -A FORWARD -m string --algo bm --string "info_hash" -j LOGDROP
+iptables -A FORWARD -m string --string "get_peers" --algo bm -j LOGDROP
+iptables -A FORWARD -m string --string "announce_peer" --algo bm -j LOGDROP
+iptables -A FORWARD -m string --string "find_node" --algo bm -j LOGDROP
+iptables -I INPUT -p tcp --dport 25 -j DROP
+iptables -I INPUT -p udp --dport 25 -j DROP
+iptables -I FORWARD -p tcp --dport 25 -j DROP
+iptables -I FORWARD -p udp --dport 25 -j DROP
+service cron restart
+service ssh restart
+service sslh restart
+service dropbear restart
+service stunnel5 restart
+service openvpn restart
+badvpn start
+python /root/8081.py & > /dev/null 2>&1
+python /root/8082.py & > /dev/null 2>&1
+python /root/8083.py & > /dev/null 2>&1
+python /root/8084.py & > /dev/null 2>&1
+scktcheck 8085 'bNetService' & > /dev/null 2>&1
+scktcheckDropbear 8086 'bNetService' & > /dev/null 2>&1
+sslh --listen 0.0.0.0:443 --ssl 127.0.0.1:441 --openvpn 127.0.0.1:1194 --anyprot 127.0.0.1:143 --pidfile /var/run/sslh/sslh.pid > /dev/null 2>&1
+cd /etc/openvpn; screen -dmS ovpnscr openvpn --config "server.conf"; cd > /dev/null 2>&1
+exit 0
+
+// PROXIES PYTHON
+// WEBSOCKET
+rm ws.py
+wget https://bnetservice.com.mx/bNetService/root/ws.py --no-check-certificate
+chmod 777 ws.py
+
+// NORMALES
+wget https://bnetservice.com.mx/bNetService/root/8081.py --no-check-certificate
+chmod +x 8081.py
+wget https://bnetservice.com.mx/bNetService/root/8082.py --no-check-certificate
+chmod +x 8082.py
+wget https://bnetservice.com.mx/bNetService/root/8083.py --no-check-certificate
+chmod +x 8083.py
+wget https://bnetservice.com.mx/bNetService/root/8084.py --no-check-certificate
+chmod +x 8084.py
+wget https://bnetservice.com.mx/bNetService/bNetProxySSH.tar.gz --no-check-certificate
+tar -xf bNetProxySSH.tar.gz
+bash instalar bNetService
+rm bNetProxySSH.tar.gz
+rm -r instalar
+wget https://bnetservice.com.mx/bNetService/bNetProxyDROPBEAR.tar.gz --no-check-certificate
+tar -xf bNetProxyDROPBEAR.tar.gz
+bash instalar bNetService
+rm bNetProxyDROPBEAR.tar.gz
+rm -r instalar
+
+// SSLH
+apt-get install sslh -y
+
+nano /etc/default/sslh
+
+RUN=yes
+sslh --listen 0.0.0.0:80 --ssh 127.0.0.1:8022 --http 127.0.0.1:81 --anyprot 127.0.0.1:8080 --pidfile /var/run/sslh/sslh.pid
+
+apt-get remove sslh -y
+sudo apt remove sslh -y
+sudo mv /var/lib/dpkg/info/sslh.* /tmp
+
+// SCRIPT PANEL
+apt-get update -y
+apt-get upgrade -y
+
+// INSTALACION
+rm install.sh
+wget http://80.211.191.58/bnetmanager/install.sh
+chmod +x install.sh
+./install.sh
+
+// Desinstalar Squid en WEBSOCKET
+apt-get remove squid*
+apt-get purge squid
+apt-get remove --auto-remove squid
+apt-get clean squid
+
+// V2RAY 8443
+source <(curl -sL https://multi.netlify.app/v2ray.sh) -k
+
+Modificar run
+
+// DROPBEAR
+apt-get update && wget https://raw.githubusercontent.com/barcewin/scripts/master/dropbear && bash dropbear
+nano /etc/default/dropbear
+
+NO_START=0
+DROPBEAR_PORT=143
+DROPBEAR_EXTRA_ARGS='-p 8022'
+DROPBEAR_BANNER='/etc/banner'
+
+// STUNNEL5 (SSL)
+apt-get update && apt-get install ca-certificates && apt-get install libssl-dev && wget https://raw.githubusercontent.com/barcewin/scripts/master/stunnel5 --no-check-certificate && bash stunnel5
+
+service stunnel5 restart
+chmod 700 /usr/local/etc/stunnel/stunnel.pem
+nano /usr/local/etc/stunnel/stunnel.conf
+
+// WEBSOCKET SSL
+setuid = stunnel
+setgid = stunnel
+chroot = /var/lib/stunnel
+pid = /stunnel.pid
+client = no
+[ssh]
+cert = /usr/local/etc/stunnel/stunnel.pem
+accept = 443
+connect = 127.0.0.1:80
+
+// NORMAL SSL
+setuid = stunnel
+setgid = stunnel
+chroot = /var/lib/stunnel
+pid = /stunnel.pid
+client = no
+[ssh]
+cert = /usr/local/etc/stunnel/stunnel.pem
+accept = 441
+connect = 127.0.0.1:22222
+[dropbear]
+cert = /usr/local/etc/stunnel/stunnel.pem
+accept = 444
+connect = 127.0.0.1:143
+[openvpn]
+cert = /usr/local/etc/stunnel/stunnel.pem
+accept = 442
+connect = 127.0.0.1:1194
+
+// CLOUDFLARE Y CLOUDFRONT WEBSOCKET
+ZeroSSL
+cat private.key certificate.crt ca_bundle.crt > stunnel.pem
+
+// OPENVPN
+wget https://bnetservice.com.mx/bNetService/newadm/instalar.sh --no-check-certificate && chmod +x instalar.sh && ./instalar.sh
+
+// SSH
+/usr/bin/ssh-keygen -A
+
+cd /etc/ssh
+rm sshd_config
+wget https://bnetservice.com.mx/bNetService/etc/sshd_config --no-check-certificate
+cd
+service ssh restart
+cd /etc/
+rm banner
+wget https://bnetservice.com.mx/bNetService/etc/banner --no-check-certificate
+cd
+chmod 700 /usr/local/etc/stunnel/stunnel.pem
+service ssh restart
+service dropbear restart
+service stunnel5 restart
+
+// BASHRC
+nano .bashrc
+export PATH="$HOME/bin:/usr/local/bin:/usr/local/sbin:/usr/sbin:/sbin:/usr/bin:/bin:/usr/local/games:/usr/games"
+
+Instalar apache para el speedtest
+
+// Eliminar apache
+service apache2 stop
+apt-get purge apache2 apache2* apache2-bin apache2-data apache2-utils -y
+apt-get autoremove -y
+rm -rf /usr/sbin/apache2 /usr/lib/apache2 /etc/apache2 /usr/share/apache2 /usr/share/man/man8/apache2.8.gz
