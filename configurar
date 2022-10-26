@@ -25,7 +25,7 @@ IP NOMBRE
 apt-get install resolvconf
 
 systemctl start resolvconf.service
-systemctl enable resolveconf.service
+systemctl enable resolvconf.service
 
 nano /etc/network/interfaces
 
