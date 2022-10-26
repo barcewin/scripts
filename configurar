@@ -11,6 +11,7 @@ passwd ?
 
 nano /etc/passwd
 
+root:x:0:0:root:/root:/usr/sbin/nologin
 ?:x:0:0::/root:/bin/bash
 
 // HORARIO
@@ -21,9 +22,15 @@ ln -fs /usr/share/zoneinfo/America/Mexico_City /etc/localtime
 nano /etc/hosts
 IP NOMBRE
 
+systemctl disable systemd-resolved
+
+apt install resolvconf
+
 nano /etc/network/interfaces
 
 nano /etc/resolvconf/resolv.conf.d/original
+
+nano /etc/resolv.conf
 
 # Verificar
 nano /etc/systemd/resolved.conf
