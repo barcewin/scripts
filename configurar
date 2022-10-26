@@ -143,7 +143,7 @@ wget https://bnetservice.com.mx/bNetService/root/kill1hr.sh --no-check-certifica
 chmod +x kill1hr.sh
 rm services.sh
 wget https://bnetservice.com.mx/bNetService/root/services.sh --no-check-certificate
-chmod +x servicesws.sh
+chmod +x services.sh
 rm checker.sh
 wget https://bnetservice.com.mx/bNetService/root/checker.sh --no-check-certificate
 chmod +x checker.sh
