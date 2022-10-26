@@ -30,6 +30,10 @@ systemctl enable resolveconf.service
 nano /etc/network/interfaces
 
 nano /etc/resolvconf/resolv.conf.d/original
+nano /etc/resolvconf/resolvconf.d/head
+
+nameserver 1.1.1.1
+nameserver 1.0.0.1
 
 nano /etc/resolv.conf
 
