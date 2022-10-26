@@ -29,6 +29,8 @@ systemctl enable resolveconf.service
 
 nano /etc/network/interfaces
 
+dns-nameservers 1.1.1.1 1.0.0.1 127.0.0.53
+
 nano /etc/resolvconf/resolv.conf.d/original
 nano /etc/resolvconf/resolvconf.d/head
 
