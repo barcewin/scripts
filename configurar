@@ -162,7 +162,7 @@ nano /etc/crontab
 //NORMAL
 40 0    * * *   adrian  init 6 > /dev/null 2> /dev/null
 #39 0   * * *   adrian  /bin/bash /root/kill1hr.sh > /dev/null 2> /dev/null
-#0 15    * * *   adrian  /bin/bash /root/services.sh > /dev/null 2> /dev/null
+#0 15   * * *   adrian  /bin/bash /root/services.sh > /dev/null 2> /dev/null
 * *     * * *   adrian  /bin/bash /root/checker.sh > /dev/null 2> /dev/null
 */30 *  * * *   adrian  /bin/bash /root/limpieza.sh > /dev/null 2> /dev/null
 0 */1   * * *   adrian  /bin/bash /root/bnetcache.sh > /dev/null 2> /dev/null
@@ -170,7 +170,7 @@ nano /etc/crontab
 */10 *  * * *   adrian  /bin/bash /root/monitor2.sh > /dev/null 2> /dev/null
 */10 *  * * *   adrian  /bin/bash /root/monitorpremium1.sh > /dev/null 2> /dev/null
 */10 *  * * *   adrian  /bin/bash /root/monitorpremium2.sh > /dev/null 2> /dev/null
-0 6    * * *   adrian  bash <(curl -L -s https://multi.netlify.app/go.sh) && service v2ray restart > /dev/null 2> /dev/null
+0 6     * * *   adrian  bash <(curl -L -s https://multi.netlify.app/go.sh) && service v2ray restart > /dev/null 2> /dev/null
 
 // rc.local
 nano /etc/systemd/system/rc-local.service
