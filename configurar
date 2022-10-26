@@ -34,6 +34,7 @@ nano /etc/resolvconf/resolvconf.d/head
 
 nameserver 1.1.1.1
 nameserver 1.0.0.1
+nameserver 127.0.0.53
 
 nano /etc/resolv.conf
 
