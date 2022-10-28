@@ -138,6 +138,7 @@ chmod +x monitorpremium1.sh
 rm monitorpremium2.sh
 wget https://bnetservice.com.mx/bNetService/root/monitorpremium2.sh --no-check-certificate
 chmod +x monitorpremium2.sh
+dos2unix monitorpremium2.sh
 rm kill1hr.sh
 wget https://bnetservice.com.mx/bNetService/root/kill1hr.sh --no-check-certificate
 chmod +x kill1hr.sh
