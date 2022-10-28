@@ -22,6 +22,23 @@ ln -fs /usr/share/zoneinfo/America/Mexico_City /etc/localtime
 nano /etc/hosts
 IP NOMBRE
 
+apt-get remove resolvconf
+systemctl enable systemd-resolved
+systemctl start systemd-resolved
+
+nano /etc/resolv.conf
+sudo ln -sf /run/systemd/resolve/resolv.conf /etc/resolv.conf
+
+nano /run/systemd/resolve/resolv.conf
+nameserver 8.8.8.8
+nameserver 8.8.4.4
+nameserver 127.0.0.53
+
+sudo nano /etc/network/interfaces
+
+dns-nameservers 8.8.8.8 8.8.4.4 127.0.0.53
+
+------------------------------------------------------------
 apt-get install resolvconf
 
 systemctl start resolvconf.service
