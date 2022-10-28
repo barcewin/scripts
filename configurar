@@ -102,18 +102,23 @@ dos2unix limpieza.sh
 chmod +x limpieza.sh
 rm monitor1.sh
 wget https://bnetservice.com.mx/bNetService/root/monitor1.sh --no-check-certificate
+dos2unix monitor1.sh
 chmod +x monitor1.sh
 rm monitorpremium1.sh
 wget https://bnetservice.com.mx/bNetService/root/monitorpremium1.sh --no-check-certificate
+dos2unix monitorpremium1.sh
 chmod +x monitorpremium1.sh
 rm kill1hr.sh
 wget https://bnetservice.com.mx/bNetService/root/kill1hr.sh --no-check-certificate
+dos2unix kill1hr.sh
 chmod +x kill1hr.sh
 rm servicesws.sh
 wget https://bnetservice.com.mx/bNetService/root/servicesws.sh --no-check-certificate
+dos2unix servicesws.sh
 chmod +x servicesws.sh
 rm checkerws.sh
 wget https://bnetservice.com.mx/bNetService/root/checkerws.sh --no-check-certificate
+dos2unix checkerws.sh
 chmod +x checkerws.sh
 nano /etc/crontab
 
@@ -128,25 +133,31 @@ dos2unix limpieza.sh
 chmod +x limpieza.sh
 rm monitor1.sh
 wget https://bnetservice.com.mx/bNetService/root/monitor1.sh --no-check-certificate
+dos2unix monitor1.sh
 chmod +x monitor1.sh
 rm monitor2.sh
 wget https://bnetservice.com.mx/bNetService/root/monitor2.sh --no-check-certificate
+dos2unix monitor2.sh
 chmod +x monitor2.sh
 rm monitorpremium1.sh
 wget https://bnetservice.com.mx/bNetService/root/monitorpremium1.sh --no-check-certificate
+dos2unix monitorpremium1.sh
 chmod +x monitorpremium1.sh
 rm monitorpremium2.sh
 wget https://bnetservice.com.mx/bNetService/root/monitorpremium2.sh --no-check-certificate
-chmod +x monitorpremium2.sh
 dos2unix monitorpremium2.sh
+chmod +x monitorpremium2.sh
 rm kill1hr.sh
 wget https://bnetservice.com.mx/bNetService/root/kill1hr.sh --no-check-certificate
+dos2unix kill1hr.sh
 chmod +x kill1hr.sh
 rm services.sh
 wget https://bnetservice.com.mx/bNetService/root/services.sh --no-check-certificate
+dos2unix services.sh
 chmod +x services.sh
 rm checker.sh
 wget https://bnetservice.com.mx/bNetService/root/checker.sh --no-check-certificate
+dos2unix checker.sh
 chmod +x checker.sh
 nano /etc/crontab
 
