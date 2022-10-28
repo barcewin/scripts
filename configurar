@@ -27,6 +27,10 @@ systemctl enable systemd-resolved
 systemctl start systemd-resolved
 
 nano /etc/resolv.conf
+
+nano /etc/systemd/resolved.conf
+DNS=8.8.8.8 8.8.4.4 127.0.0.53
+
 sudo ln -sf /run/systemd/resolve/resolv.conf /etc/resolv.conf
 
 nano /run/systemd/resolve/resolv.conf
