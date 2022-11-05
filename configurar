@@ -1,5 +1,32 @@
 <?php
 
+// BASE DE USUARIOS
+service ssh stop
+service dropbear stop
+service stunnel5 stop
+apt-get update -y
+sudo rm /etc/passwd.lock
+sudo rm /etc/shadow.lock
+sudo rm /etc/group.lock
+sudo rm /etc/gshadow.lock
+GRUPO=ltg; for u in $(getent group $GRUPO | sed -e 's/^.*:.*:.*://' -e 's/,/ /g'); do sudo userdel $u --force; done
+cat /dev/null > lifetime.db
+echo "root 5" >> lifetime.db
+sed -i '$a adrianv1 300' lifetime.db
+sudo delgroup ltg --force
+addgroup ltg
+service ssh start
+service dropbear start
+service stunnel5 start
+bash bnetcache.sh
+bash bnetcachews.sh
+rm -r /var/log/journal/*
+rm -r /var/cache/*
+rm -r /var/log/v2ray/*
+nano /etc/passwd
+
+init 6
+
 // CONTRASEÑAS
 apt-get remove --auto-remove libpam-cracklib -y
 passwd root
