@@ -1,6 +1,6 @@
 <?php
 
-// BASE DE USUARIOS
+// MANTENIMIENTO
 service ssh stop
 service dropbear stop
 service stunnel5 stop
