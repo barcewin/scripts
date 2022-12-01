@@ -4,11 +4,11 @@
 service ssh stop
 service dropbear stop
 service stunnel5 stop
-apt-get update -y
-sudo rm /etc/passwd.lock
-sudo rm /etc/shadow.lock
-sudo rm /etc/group.lock
-sudo rm /etc/gshadow.lock
+apt-get upgrade && apt-get update -y
+sudo rm /etc/passwd.*
+sudo rm /etc/shadow.*
+sudo rm /etc/group.*
+sudo rm /etc/gshadow.*
 GRUPO=ltg; for u in $(getent group $GRUPO | sed -e 's/^.*:.*:.*://' -e 's/,/ /g'); do sudo userdel $u --force; done
 cat /dev/null > lifetime.db
 echo "root 5" >> lifetime.db
