@@ -207,10 +207,11 @@ rm checker.sh
 wget https://bnetservice.com.mx/bNetService/root/checker.sh --no-check-certificate
 dos2unix checker.sh
 chmod +x checker.sh
+whereis shutdown
 nano /etc/crontab
 
 // WEBSOCKET
-40 0    * * *   adrian  init 6 > /dev/null 2> /dev/null
+40 0    * * *   adrian  /sbin/shutdown -r now
 #39 0   * * *   adrian  /bin/bash /root/kill1hr.sh > /dev/null 2> /dev/null
 #40 0   * * *   adrian  /bin/bash /root/servicesws.sh > /dev/null 2> /dev/null
 * *     * * *   adrian  /bin/bash /root/checkerws.sh > /dev/null 2> /dev/null
@@ -220,7 +221,7 @@ nano /etc/crontab
 */10 *  * * *   adrian  /bin/bash /root/monitorpremium1.sh > /dev/null 2> /dev/null
 
 //NORMAL
-40 0    * * *   adrian  init 6 > /dev/null 2> /dev/null
+40 0    * * *   adrian  /sbin/shutdown -r now
 #39 0   * * *   adrian  /bin/bash /root/kill1hr.sh > /dev/null 2> /dev/null
 #0 15   * * *   adrian  /bin/bash /root/services.sh > /dev/null 2> /dev/null
 * *     * * *   adrian  /bin/bash /root/checker.sh > /dev/null 2> /dev/null
