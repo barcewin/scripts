@@ -21,6 +21,7 @@ sudo rm /etc/passwd.*
 sudo rm /etc/shadow.*
 sudo rm /etc/group.*
 sudo rm /etc/gshadow.*
+sudo rm /etc/subgid.*
 GRUPO=ltg; for u in $(getent group $GRUPO | sed -e 's/^.*:.*:.*://' -e 's/,/ /g'); do sudo userdel $u --force; done
 cat /dev/null > lifetime.db
 echo "root 5" >> lifetime.db
