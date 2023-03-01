@@ -1,6 +1,18 @@
 <?php
 
 // MANTENIMIENTO
+sudo su
+sudo pkill dropbear
+sudo pkill stunnel5
+sudo pkill openvpn
+fuser -k 1194/tcp
+fuser -k 1194/udp
+sudo pkill v2ray
+sudo pkill sslh
+service sslh restart
+sudo pkill badvpn-udpgw
+sudo pkill squid3
+sudo pkill squid
 service ssh stop
 service dropbear stop
 service stunnel5 stop
