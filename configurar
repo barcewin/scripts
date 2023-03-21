@@ -41,6 +41,8 @@ nano /etc/passwd
 init 6
 
 // CONTRASEÑAS
+Comentar ultima linea
+nano /etc/security/pwquality.conf
 apt-get remove --auto-remove libpam-cracklib -y
 passwd root
 
