@@ -1,5 +1,7 @@
 <?php
 
+dpkg --configure -a
+
 // MANTENIMIENTO
 sudo su
 sudo pkill dropbear
