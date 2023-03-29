@@ -58,6 +58,9 @@ nano /etc/passwd
 root:x:0:0:root:/root:/usr/sbin/nologin
 ?:x:0:0::/root:/bin/bash
 
+// TC
+apt install iptables iproute2
+
 // HORARIO
 timedatectl set-timezone America/Mexico_City
 ln -fs /usr/share/zoneinfo/America/Mexico_City /etc/localtime
@@ -283,7 +286,12 @@ nano /etc/rc.local
 
 // WEBSOCKET
 #!/bin/bash
-iptables -N LOGDROP > /dev/null 2>&1
+tc qdisc del dev eth0 root
+tc qdisc del dev eth0 ingress
+tc qdisc add dev eth0 root handle 1: htb default 10
+tc class add dev eth0 parent 1: classid 1:1 htb rate 1000mbit
+tc class add dev eth0 parent 1:1 classid 1:10 htb rate 1000mbit
+iptables -N LOGDROP
 iptables -F LOGDROP
 iptables -A LOGDROP -j LOG --log-prefix "LOGDROP "
 iptables -A LOGDROP -j DROP
@@ -300,10 +308,8 @@ iptables -A FORWARD -m string --algo bm --string "info_hash" -j LOGDROP
 iptables -A FORWARD -m string --string "get_peers" --algo bm -j LOGDROP
 iptables -A FORWARD -m string --string "announce_peer" --algo bm -j LOGDROP
 iptables -A FORWARD -m string --string "find_node" --algo bm -j LOGDROP
-iptables -I INPUT -p tcp --dport 25 -j DROP
-iptables -I INPUT -p udp --dport 25 -j DROP
-iptables -I FORWARD -p tcp --dport 25 -j DROP
-iptables -I FORWARD -p udp --dport 25 -j DROP
+iptables -A INPUT -p tcp --dport 25 -j DROP
+iptables -A OUTPUT -p tcp --sport 25 -j DROP
 service cron restart
 service ssh restart
 service dropbear restart
@@ -315,7 +321,12 @@ exit 0
 
 // NORMAL
 #!/bin/bash
-iptables -N LOGDROP > /dev/null 2>&1
+tc qdisc del dev eth0 root
+tc qdisc del dev eth0 ingress
+tc qdisc add dev eth0 root handle 1: htb default 10
+tc class add dev eth0 parent 1: classid 1:1 htb rate 1000mbit
+tc class add dev eth0 parent 1:1 classid 1:10 htb rate 1000mbit
+iptables -N LOGDROP
 iptables -F LOGDROP
 iptables -A LOGDROP -j LOG --log-prefix "LOGDROP "
 iptables -A LOGDROP -j DROP
@@ -332,10 +343,8 @@ iptables -A FORWARD -m string --algo bm --string "info_hash" -j LOGDROP
 iptables -A FORWARD -m string --string "get_peers" --algo bm -j LOGDROP
 iptables -A FORWARD -m string --string "announce_peer" --algo bm -j LOGDROP
 iptables -A FORWARD -m string --string "find_node" --algo bm -j LOGDROP
-iptables -I INPUT -p tcp --dport 25 -j DROP
-iptables -I INPUT -p udp --dport 25 -j DROP
-iptables -I FORWARD -p tcp --dport 25 -j DROP
-iptables -I FORWARD -p udp --dport 25 -j DROP
+iptables -A INPUT -p tcp --dport 25 -j DROP
+iptables -A OUTPUT -p tcp --sport 25 -j DROP
 service cron restart
 service ssh restart
 service sslh restart
