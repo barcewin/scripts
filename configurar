@@ -4,6 +4,7 @@ dpkg --configure -a
 
 // MANTENIMIENTO
 sudo su
+service ssh stop
 sudo pkill dropbear
 service dropbear stop
 fuser -k 143/tcp
