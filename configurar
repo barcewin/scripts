@@ -5,19 +5,35 @@ dpkg --configure -a
 // MANTENIMIENTO
 sudo su
 sudo pkill dropbear
+service dropbear stop
+fuser -k 143/tcp
+fuser -k 8022/tcp
 sudo pkill stunnel5
+service stunnel5 stop
+fuser -k 441/tcp
+fuser -k 442/tcp
+fuser -k 444/tcp
 sudo pkill openvpn
+service openvpn stop
 fuser -k 1194/tcp
 fuser -k 1194/udp
 sudo pkill v2ray
+service v2ray stop
+fuser -k 8443/tcp
 sudo pkill sslh
-service sslh restart
+service sslh stop
+fuser -k 443/tcp
 sudo pkill badvpn-udpgw
+fuser -k 7300/tcp
+fuser -k 7400/tcp
+fuser -k 7500/tcp
 sudo pkill squid3
 sudo pkill squid
-service ssh stop
-service dropbear stop
-service stunnel5 stop
+service squid3 stop
+service squid stop
+fuser -k 8080/tcp
+fuser -k 3128/tcp
+fuser -k 8799/tcp
 apt-get update --allow-insecure-repositories && apt-get upgrade -y
 sudo rm /etc/passwd.*
 sudo rm /etc/shadow.*
@@ -60,6 +76,12 @@ root:x:0:0:root:/root:/usr/sbin/nologin
 
 // TC
 apt install iptables iproute2
+
+tc qdisc del dev eth0 root
+tc qdisc del dev eth0 ingress
+tc qdisc add dev eth0 root handle 1: htb default 10
+tc class add dev eth0 parent 1: classid 1:1 htb rate 1000mbit
+tc class add dev eth0 parent 1:1 classid 1:10 htb rate 1000mbit
 
 // HORARIO
 timedatectl set-timezone America/Mexico_City
