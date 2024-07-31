@@ -41,7 +41,12 @@ sudo rm /etc/shadow.*
 sudo rm /etc/group.*
 sudo rm /etc/gshadow.*
 sudo rm /etc/subgid.*
-GRUPO=ltg; for u in $(getent group $GRUPO | sed -e 's/^.*:.*:.*://' -e 's/,/ /g'); do sudo userdel --force $u; done
+sed -i '/^bnet-/d' /etc/passwd
+sed -i '/^bnet-/d' /etc/shadow
+sed -i '/^bnet-/d' /etc/group
+sed -i '/^bnet-/d' /etc/gshadow
+sed -i '/^bnet-/d' /etc/subgid
+#GRUPO=ltg; for u in $(getent group $GRUPO | sed -e 's/^.*:.*:.*://' -e 's/,/ /g'); do sudo userdel --force $u; done
 cat /dev/null > lifetime.db
 echo "root 5" >> lifetime.db
 sed -i '$a adrianv1 300' lifetime.db
