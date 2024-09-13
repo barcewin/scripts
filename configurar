@@ -41,6 +41,7 @@ sudo rm /etc/shadow.*
 sudo rm /etc/group.*
 sudo rm /etc/gshadow.*
 sudo rm /etc/subgid.*
+sudo rm /etc/subuid.*
 sed -i '/^bnet-/d' /etc/passwd
 sed -i '/^bnet-/d' /etc/shadow
 sed -i '/^bnet-/d' /etc/group
