@@ -153,6 +153,8 @@ df -h
 fdisk -l
 resize2fs /dev/vda1
 resize2fs /dev/vda2
+(rhel)
+xfs_growfs /
 
 apt-get -y --purge remove samba*;
 apt-get -y --purge remove apache2*;
